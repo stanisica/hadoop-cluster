@@ -26,7 +26,7 @@ def check_hadoop_connection(work_dir):
     return False
 
 def main():
-    print("starting docker compose...")
+    print("\nstarting docker compose...")
     run_command("docker-compose up -d", "../docker/")
 
     if check_hadoop_connection("../docker/"):
