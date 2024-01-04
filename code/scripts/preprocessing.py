@@ -8,17 +8,15 @@ from pyspark.sql.types import StructType, StructField, StringType, IntegerType
 def map_category_views(row):
     category_id = row.category_id
     event_type = row.event_type
+    category_code = row.category_code if row.category_code is not None else "noname"
 
     if event_type == "view":
-        return (category_id, 1)
+        return ((category_id,category_code), 1)
     else:
-        return (category_id, 0)
+        return ((category_id,category_code), 0)
 
 HDFS_NAMENODE = os.environ["CORE_CONF_fs_defaultFS"]
 HIVE_METASTORE_URIS = os.environ["HIVE_SITE_CONF_hive_metastore_uris"]
-
-# os.environ['PYSPARK_PYTHON'] = sys.executable
-# os.environ['PYSPARK_DRIVER_PYTHON'] = sys.executable
 
 conf = SparkConf().setAppName("batch-preprocessing").setMaster("spark://spark-master:7077")
 conf.set("spark.sql.warehouse.dir", "/hive/warehouse")
@@ -31,11 +29,9 @@ csv = spark.read.option("header", "true").csv(HDFS_NAMENODE + "/data/batch.csv")
 rdd = csv.rdd
 result = (
     rdd.map(map_category_views)
-    .filter(lambda x: x[0] is not None)
     .reduceByKey(lambda a, b: a + b)
-    .max(key=lambda x: x[1])
+    .map(lambda x: Row(category_id=x[0][0], category_code=x[0][1], views=x[1]))
 )
 
-result_rdd = spark.sparkContext.parallelize([Row(category_id=result[0], views=result[1])])
-result_df = spark.createDataFrame(result_rdd)
-result_df.write.mode("overwrite").saveAsTable("most_viewed_ctg")
+result_df = spark.createDataFrame(result)
+result_df.write.mode("overwrite").saveAsTable("ctg_views")

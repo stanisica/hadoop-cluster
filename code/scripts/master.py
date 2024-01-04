@@ -30,10 +30,11 @@ def main():
     run_command("docker-compose up -d", "../docker/")
 
     if check_hadoop_connection("../docker/"):
-        print("running import-data.py script...")
+        print("importing raw data...")
         run_command("python3 import_data.py", "./")
 
     print("submitting spark job...")
+    time.sleep(5)
     spark_submit_cmd = "./spark/bin/spark-submit --packages org.postgresql:postgresql:42.2.10 ./preprocessing.py"
     docker_exec_cmd = f"docker exec -it spark-master {spark_submit_cmd}"
     run_command(docker_exec_cmd, "./")

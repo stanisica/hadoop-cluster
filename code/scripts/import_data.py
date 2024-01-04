@@ -1,5 +1,4 @@
 import subprocess
-import os
 
 def put_file_in_hdfs(namenode_container, local_file_path, hdfs_dest_path):
     try:
