@@ -8,7 +8,7 @@ from pyspark.sql.types import StructType, StructField, StringType, IntegerType
 def map_category_views(row):
     category_id = row.category_id
     event_type = row.event_type
-    category_code = row.category_code if row.category_code is not None else "noname"
+    category_code = row.category_code if row.category_code is not None else "other"
 
     if event_type == "view":
         return ((category_id,category_code), 1)
@@ -24,7 +24,7 @@ conf.set("hive.metastore.uris", HIVE_METASTORE_URIS)
 
 spark = SparkSession.builder.config(conf=conf).enableHiveSupport().getOrCreate()
 spark.conf.set("spark.sql.execution.arrow.pyspark.enabled", "true")
-csv = spark.read.option("header", "true").csv(HDFS_NAMENODE + "/data/batch.csv")
+csv = spark.read.option("header", "true").csv(HDFS_NAMENODE + "/batch.csv")
 
 rdd = csv.rdd
 result = (
