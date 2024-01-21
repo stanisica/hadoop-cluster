@@ -1,8 +1,8 @@
 #!/bin/bash
 
 echo "Starting Docker Compose..."
-docker-compose -f ../docker/docker-compose.yaml build
-docker-compose -f ../docker/docker-compose.yaml up -d
+docker compose -f ../docker/docker-compose.yaml build
+docker compose -f ../docker/docker-compose.yaml up -d
 
 check_namenode_ready() {
     while true; do

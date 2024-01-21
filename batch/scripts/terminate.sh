@@ -1,4 +1,4 @@
-docker-compose -f ../docker/docker-compose.yaml down -v
+docker compose -f ../docker/docker-compose.yaml down -v
 # docker rmi docker-superset:latest
 # docker rmi bde2020/spark-worker:3.0.1-hadoop3.2
 # docker rmi bde2020/spark-master:3.0.1-hadoop3.2
