@@ -35,16 +35,6 @@ services:
     environment:
       SERVICE_PRECONDITION: "namenode:9870"
 
-  datanode3:
-    image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
-    container_name: datanode3
-    volumes:
-      - datanode3:/hadoop/dfs/data
-    env_file:
-      - ./config.env
-    environment:
-      SERVICE_PRECONDITION: "namenode:9870"
-
   spark-master:
     image: bde2020/spark-master:3.0.1-hadoop3.2
     container_name: spark-master
@@ -100,7 +90,7 @@ services:
       - ./config.env
     command: /opt/hive/bin/hive --service metastore
     environment:
-      SERVICE_PRECONDITION: "namenode:9870 datanode1:9864 datanode2:9864 datanode3:9864 hive-metastore-postgresql:5432"
+      SERVICE_PRECONDITION: "namenode:9870 datanode1:9864 datanode2:9864 hive-metastore-postgresql:5432"
     ports:
       - "9083:9083"
 
@@ -108,20 +98,18 @@ services:
     image: bde2020/hive-metastore-postgresql:2.3.0
     container_name: hive-metastore-postgresql
 
-  hue:
-    image: gethue/hue:20201111-135001
-    hostname: hue
-    container_name: hue
-    dns: 8.8.8.8
+  superset:
+    build: ../superset/
+    container_name: superset
+    environment:
+      - ADMIN_USERNAME=admin
+      - ADMIN_EMAIL=satelit1312srbija@gmail.com
+      - ADMIN_PASSWORD=admin
+      - HIVE_CONNECTION=hive://hive@hive-server:10000/default
     ports:
-      - "3000:8888"
-    volumes:
-      - ./hue_config:/usr/share/hue/desktop/conf
-    depends_on:
-      - namenode
+      - "8088:8088"
 
 volumes:
   namenode:
   datanode1:
   datanode2:
-  datanode3:
