@@ -14,6 +14,8 @@ services:
     ports:
       - 9870:9870
       - 9000:9000
+    networks:
+      - cluster
 
   datanode1:
     image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
@@ -24,6 +26,8 @@ services:
       - ./config.env
     environment:
       SERVICE_PRECONDITION: "namenode:9870"
+    networks:
+      - cluster
 
   datanode2:
     image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
@@ -34,12 +38,15 @@ services:
       - ./config.env
     environment:
       SERVICE_PRECONDITION: "namenode:9870"
+    networks:
+      - cluster
 
   spark-master:
     image: bde2020/spark-master:3.0.1-hadoop3.2
     container_name: spark-master
     volumes:
       - ../scripts/preprocessing.py:/preprocessing.py:ro
+      - ../../stream/consumer/main.py:/consumer.py:ro
     ports:
       - 8080:8080
       - 7077:7077
@@ -47,6 +54,8 @@ services:
       - PYSPARK_PYTHON=python3
     env_file:
       - ./config.env
+    networks:
+      - cluster
 
   spark-worker1:
     image: bde2020/spark-worker:3.0.1-hadoop3.2
@@ -59,6 +68,8 @@ services:
       - 8081:8081
     env_file:
       - ./config.env
+    networks:
+      - cluster
 
   spark-worker2:
     image: bde2020/spark-worker:3.0.1-hadoop3.2
@@ -71,6 +82,8 @@ services:
       - 8082:8081
     env_file:
       - ./config.env
+    networks:
+      - cluster
 
   hive-server:
     image: bde2020/hive:2.3.2-postgresql-metastore
@@ -82,6 +95,8 @@ services:
       SERVICE_PRECONDITION: "hive-metastore:9083"
     ports:
       - "10000:10000"
+    networks:
+      - cluster
 
   hive-metastore:
     image: bde2020/hive:2.3.2-postgresql-metastore
@@ -93,10 +108,14 @@ services:
       SERVICE_PRECONDITION: "namenode:9870 datanode1:9864 datanode2:9864 hive-metastore-postgresql:5432"
     ports:
       - "9083:9083"
+    networks:
+      - cluster
 
   hive-metastore-postgresql:
     image: bde2020/hive-metastore-postgresql:2.3.0
     container_name: hive-metastore-postgresql
+    networks:
+      - cluster
 
   superset:
     build: ../superset/
@@ -108,8 +127,14 @@ services:
       - HIVE_CONNECTION=hive://hive@hive-server:10000/default
     ports:
       - "8088:8088"
+    networks:
+      - cluster
 
 volumes:
   namenode:
   datanode1:
   datanode2:
+
+networks:
+  cluster:
+    external: true
