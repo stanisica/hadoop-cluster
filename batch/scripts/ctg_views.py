@@ -1,9 +1,7 @@
 import os
-import sys
-from pyspark import SparkContext, SparkConf
-from pyspark.sql import SparkSession
 from pyspark.sql import Row
-from pyspark.sql.types import StructType, StructField, StringType, IntegerType
+from pyspark import SparkConf
+from pyspark.sql import SparkSession
 
 def map_category_views(row):
     category_id = row.category_id
