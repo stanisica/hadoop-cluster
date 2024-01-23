@@ -23,7 +23,8 @@ if docker exec namenode hdfs dfs -put /batch.csv /batch.csv; then
     echo "Running spark.py scripts..."
     docker exec -it spark-master ./spark/bin/spark-submit --packages org.postgresql:postgresql:42.2.10 ./ctg_views.py
     docker exec -it spark-master ./spark/bin/spark-submit --packages org.postgresql:postgresql:42.2.10 ./event_window.py
-
+    docker exec -it spark-master ./spark/bin/spark-submit --packages org.postgresql:postgresql:42.2.10 ./user_behavior.py
+    docker exec -it spark-master ./spark/bin/spark-submit --packages org.postgresql:postgresql:42.2.10 ./price_variation.py
 else
     echo "Failed to copy files to HDFS."
 fi

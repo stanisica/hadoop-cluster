@@ -47,7 +47,7 @@ services:
     volumes:
       - ../scripts/ctg_views.py:/ctg_views.py:ro
       - ../scripts/event_window.py:/event_window.py:ro
-      - ../scripts/test.py:/test.py:ro
+      - ../scripts/price_variation.py:/price_variation.py:ro
       - ../../stream/consumer/main.py:/consumer.py:ro
     ports:
       - 8080:8080

@@ -22,12 +22,13 @@ transformed = (
        .withColumn("day", dayofmonth("event_date"))
        .withColumn("price", col("price").cast(DoubleType()))
        .filter(csv.price.isNotNull() & (csv.price > 0))
-       .select("event_date", "year", "month", "day", "category_id", "product_id", "price")
+       .select("event_date", "event_type", "year", "month", "day", "category_id", "product_id", "price")
 )
 
 rdd = transformed.rdd
 schema = StructType([
     StructField("event_date", DateType(), True),
+    StructField("event_type", StringType(), True),
     StructField("year", IntegerType(), True),
     StructField("month", IntegerType(), True),
     StructField("day", IntegerType(), True),
