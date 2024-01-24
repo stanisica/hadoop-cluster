@@ -1,4 +1,4 @@
--- 1. Dnevna Promena Broja Pregleda po Kategoriji
+-- 1. Dnevna promena broja pregleda po kategoriji
 
 SELECT event_date, category_id,
     COUNT(CASE WHEN event_type = 'view' THEN 1 END) AS daily_views,

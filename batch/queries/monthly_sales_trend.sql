@@ -1,4 +1,4 @@
--- 2. Mesečni Trend Prodaje po Kategoriji
+-- 2. Mesečni trend prodaje po kategoriji
 
 SELECT year, month, category_id, SUM(price) AS total_sales, COUNT(DISTINCT product_id) AS unique_products_sold
 FROM event_window 
