@@ -23,5 +23,4 @@ transformed = (
 )
 
 transformed.write.mode("overwrite").saveAsTable("price_variation")
-
 spark.stop()

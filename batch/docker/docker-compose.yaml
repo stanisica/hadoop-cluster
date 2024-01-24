@@ -47,6 +47,7 @@ services:
     volumes:
       - ../scripts/ctg_views.py:/ctg_views.py:ro
       - ../scripts/event_window.py:/event_window.py:ro
+      - ../scripts/user_behavior.py:/user_behavior.py:ro
       - ../scripts/price_variation.py:/price_variation.py:ro
       - ../../stream/consumer/main.py:/consumer.py:ro
     ports:

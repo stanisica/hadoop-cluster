@@ -25,17 +25,21 @@ transformed = (
        .select("event_date", "event_type", "year", "month", "day", "category_id", "product_id", "price")
 )
 
-rdd = transformed.rdd
-schema = StructType([
-    StructField("event_date", DateType(), True),
-    StructField("event_type", StringType(), True),
-    StructField("year", IntegerType(), True),
-    StructField("month", IntegerType(), True),
-    StructField("day", IntegerType(), True),
-    StructField("category_id", StringType(), True),
-    StructField("product_id", StringType(), True),
-    StructField("price", DoubleType(), True)
-])
+transformed.write.mode("overwrite").saveAsTable("event_window")
+spark.stop()
 
-result_df = spark.createDataFrame(rdd, schema)
-result_df.write.mode("overwrite").saveAsTable("event_window")
+# rdd = transformed.rdd
+# schema = StructType([
+#     StructField("event_date", DateType(), True),
+#     StructField("event_type", StringType(), True),
+#     StructField("year", IntegerType(), True),
+#     StructField("month", IntegerType(), True),
+#     StructField("day", IntegerType(), True),
+#     StructField("category_id", StringType(), True),
+#     StructField("product_id", StringType(), True),
+#     StructField("price", DoubleType(), True)
+# ])
+
+# result_df = spark.createDataFrame(rdd, schema)
+# result_df.write.mode("overwrite").saveAsTable("event_window")
+# spark.stop()

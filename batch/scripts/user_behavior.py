@@ -22,3 +22,4 @@ transformed = (
 )
 
 transformed.write.mode("overwrite").saveAsTable("user_behavior")
+spark.stop()
