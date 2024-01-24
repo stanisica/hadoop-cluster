@@ -45,10 +45,9 @@ services:
     image: bde2020/spark-master:3.0.1-hadoop3.2
     container_name: spark-master
     volumes:
-      - ../scripts/ctg_views.py:/ctg_views.py:ro
-      - ../scripts/event_window.py:/event_window.py:ro
-      - ../scripts/user_behavior.py:/user_behavior.py:ro
-      - ../scripts/price_variation.py:/price_variation.py:ro
+      - ../scripts/spark/event_window.py:/event_window.py:ro
+      - ../scripts/spark/user_behavior.py:/user_behavior.py:ro
+      - ../scripts/spark/price_variation.py:/price_variation.py:ro
       - ../../stream/consumer/main.py:/consumer.py:ro
     ports:
       - 8080:8080
