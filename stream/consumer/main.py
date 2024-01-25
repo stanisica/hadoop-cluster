@@ -37,13 +37,11 @@ json_df = kafka_data.selectExpr("CAST(value AS STRING)") \
     .select(from_json(col("value"), schema).alias("data")) \
     .select("data.*")
 
-# Raw data
 processed_df = json_df \
     .withColumn("OrderDate", to_timestamp(col("OrderDate"), "yyyy-MM-dd HH:mm:ss")) \
     .withColumn("PriceEach", col("PriceEach").cast(DoubleType())) \
     .withColumn("Discount", regexp_replace(col("Discount"), ",", ".").cast(DoubleType()))
 
-# Prosečna Količina Naručena po Proizvodu svakih 5 minuta u prozoru od 10 minuta:
 avg_quantity = processed_df \
     .withWatermark("OrderDate", "10 minutes") \
     .groupBy(
@@ -51,7 +49,6 @@ avg_quantity = processed_df \
         window("OrderDate", "10 minutes", "5 minutes")
     ).agg(round(avg("QuantityOrdered"), 2).alias("avg_quantity"))
 
-# Ukupan Broj Narudžbi po Gradu Magacina svakih 10 minuta u prozoru od 20 minuta:
 total_orders_city = processed_df \
     .withWatermark("OrderDate", "20 minutes") \
     .groupBy(
@@ -59,7 +56,6 @@ total_orders_city = processed_df \
         window("OrderDate", "20 minutes", "10 minutes")
     ).agg(count("OrderID").alias("total_orders"))
 
-# Broj Naručenih Proizvoda po Kategoriji svakih 5 minuta u prozoru od 10 min:
 count_orders_category = processed_df \
     .withWatermark("OrderDate", "10 minutes") \
     .groupBy(
