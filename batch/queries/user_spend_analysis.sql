@@ -1,4 +1,4 @@
--- 5 Analiza potrošǌe korisnika po kategorijama
+-- 5. Analiza potrošǌe korisnika po kategorijama
 
 SELECT 
     ub.category_id,
