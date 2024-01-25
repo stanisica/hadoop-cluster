@@ -16,7 +16,7 @@ spark.conf.set("spark.sql.execution.arrow.pyspark.enabled", "true")
 csv = spark.read.option("header", "true").csv(HDFS_NAMENODE + "/batch.csv")
 
 transformed = (
-    csv.select("user_id", "category_id", "price", "event_type")
+    csv.select("user_id", "category_id", "price", "event_type", "product_id")
        .withColumn("price", col("price").cast(DoubleType()))
        .filter(col("price").isNotNull() & (col("price") > 0))
 )
