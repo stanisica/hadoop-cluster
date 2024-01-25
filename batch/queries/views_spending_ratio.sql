@@ -1,4 +1,4 @@
--- 4. Odnos pregleda i potrosenih para korisnika
+-- 4. Odnos pregleda i potrošenih para za svakog korisnika
 
 SELECT 
     user_id, 
