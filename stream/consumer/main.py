@@ -21,36 +21,37 @@ kafka_data = spark \
   .load()
 
 schema = StructType([
-    StructField("order_id", IntegerType(), True),
-    StructField("product", StringType(), True),
-    StructField("quantity", IntegerType(), True),
-    StructField("price_each", DoubleType(), True),
-    StructField("order_date", TimestampType(), True),
+    StructField("OrderID", IntegerType(), True),
+    StructField("Product", StringType(), True),
+    StructField("QuantityOrdered", IntegerType(), True),
+    StructField("PriceEach", StringType(), True),  
+    StructField("OrderDate", StringType(), True),
     StructField("CustomerShippingAddress", StringType(), True),
-    StructField("city_store", StringType(), True),
-    StructField("category", StringType(), True),
-    StructField("gender", StringType(), True),
-    StructField("age_range", StringType(), True),
-    StructField("discount", DoubleType(), True)
+    StructField("CityStore", StringType(), True),
+    StructField("Category", StringType(), True),
+    StructField("CustomerGender", StringType(), True),
+    StructField("CustomerAgeRange", StringType(), True),
+    StructField("Discount", StringType(), True)  
 ])
 
 json_df = kafka_data.selectExpr("CAST(value AS STRING)") \
     .select(from_json(col("value"), schema).alias("data")) \
     .select("data.*")
 
-processed_df = json_df.select([col(c).alias(c.replace(" ", "").replace("-", "")) for c in json_df.columns])
-processed_df = processed_df.drop("CustomerShippingAddress")
+processed_df = json_df \
+    .withColumn("OrderDate", to_timestamp(col("OrderDate"), "yyyy-MM-dd HH:mm:ss")) \
+    .withColumn("PriceEach", col("PriceEach").cast(DoubleType())) \
+    .withColumn("Discount", regexp_replace(col("Discount"), ",", ".").cast(DoubleType()))
 
 def write_to_hive(batch_df, batch_id):
-    batch_df.write.saveAsTable("structured", mode="append")
+    batch_df.write.saveAsTable("raw", mode="append")
 
-processed = processed_df.writeStream \
+query_raw = processed_df.writeStream \
     .outputMode("update") \
     .trigger(processingTime='1 minute') \
     .foreachBatch(write_to_hive) \
     .start()
 
-query_raw = kafka_data.writeStream.outputMode("update").trigger(processingTime='1 minute').foreachBatch(lambda batch_df, batch_id: batch_df.write.saveAsTable("raw", mode="append")).start()
 query_raw.awaitTermination()
+#query_raw = kafka_data.writeStream.outputMode("update").trigger(processingTime='1 minute').foreachBatch(lambda batch_df, batch_id: batch_df.write.saveAsTable("raw", mode="append")).start()
 
-processed.awaitTermination()
