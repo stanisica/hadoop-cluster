@@ -40,7 +40,6 @@ json_df = kafka_data.selectExpr("CAST(value AS STRING)") \
 
 processed_df = json_df.select([col(c).alias(c.replace(" ", "").replace("-", "")) for c in json_df.columns])
 processed_df = processed_df.drop("CustomerShippingAddress")
-processed_df = json_df.drop("Customer Shipping Address")
 
 def write_to_hive(batch_df, batch_id):
     batch_df.write.saveAsTable("structured", mode="append")
